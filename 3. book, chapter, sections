@@ -1,0 +1,131 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <memory>
+using namespace std;
+
+// Subsection class
+class Subsection {
+public:
+    string name;
+    Subsection(string name) {
+        this->name = name;
+    }
+};
+
+// Section class
+class Section {
+public:
+    string name;
+    vector<shared_ptr<Subsection>> subsections;
+
+    Section(string name) {
+        this->name = name;
+    }
+
+    void addSubsection(shared_ptr<Subsection> subsection) {
+        subsections.push_back(subsection);
+    }
+
+    void printSubsections() const {
+        for (auto& subsection : subsections) {
+            cout << "\t\tSubsection: " << subsection->name << endl;
+        }
+    }
+};
+
+// Chapter class
+class Chapter {
+public:
+    string name;
+    vector<shared_ptr<Section>> sections;
+
+    Chapter(string name) {
+        this->name = name;
+    }
+
+    void addSection(shared_ptr<Section> section) {
+        sections.push_back(section);
+    }
+
+    void printSections() const {
+        for (auto& section : sections) {
+            cout << "\tSection: " << section->name << endl;
+            section->printSubsections();
+        }
+    }
+};
+
+// Book class
+class Book {
+public:
+    string title;
+    vector<shared_ptr<Chapter>> chapters;
+
+    Book(string title) {
+        this->title = title;
+    }
+
+    void addChapter(shared_ptr<Chapter> chapter) {
+        chapters.push_back(chapter);
+    }
+
+    void printBook() const {
+        cout << "\nBook Title: " << title << endl;
+        for (auto& chapter : chapters) {
+            cout << "Chapter: " << chapter->name << endl;
+            chapter->printSections();
+        }
+    }
+};
+
+// Main function
+int main() {
+    string bookTitle, chapterTitle, sectionTitle, subsectionTitle;
+    int numChapters, numSections, numSubsections;
+
+    cout << "Enter the title of the book: ";
+    getline(cin, bookTitle);
+
+    auto book = make_shared<Book>(bookTitle);
+
+    cout << "Enter the number of chapters: ";
+    cin >> numChapters;
+    cin.ignore();
+
+    for (int i = 0; i < numChapters; ++i) {
+        cout << "\nEnter title for Chapter " << (i + 1) << ": ";
+        getline(cin, chapterTitle);
+        auto chapter = make_shared<Chapter>(chapterTitle);
+
+        cout << "Enter the number of sections in Chapter " << (i + 1) << ": ";
+        cin >> numSections;
+        cin.ignore();
+
+        for (int j = 0; j < numSections; ++j) {
+            cout << "Enter title for Section " << (j + 1) << ": ";
+            getline(cin, sectionTitle);
+            auto section = make_shared<Section>(sectionTitle);
+
+            cout << "Enter the number of subsections in Section " << (j + 1) << ": ";
+            cin >> numSubsections;
+            cin.ignore();
+
+            for (int k = 0; k < numSubsections; ++k) {
+                cout << "Enter title for Subsection " << (k + 1) << ": ";
+                getline(cin, subsectionTitle);
+                auto subsection = make_shared<Subsection>(subsectionTitle);
+                section->addSubsection(subsection);
+            }
+
+            chapter->addSection(section);
+        }
+
+        book->addChapter(chapter);
+    }
+
+    // Print the full book structure
+    book->printBook();
+
+    return 0;
+}
