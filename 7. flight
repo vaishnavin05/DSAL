@@ -1,0 +1,89 @@
+#include <iostream>
+#include <unordered_map>
+#include <list>
+#include <vector>
+#include <queue>
+using namespace std;
+
+// Graph class using adjacency list representation
+class Graph {
+private:
+    unordered_map<string, list<pair<string, int>>> adjList;
+
+public:
+    // Add a flight (edge) between two cities with cost (time/fuel)
+    void addFlight(const string& cityA, const string& cityB, int cost) {
+        adjList[cityA].push_back({cityB, cost});    // A -> (B, cost)
+        adjList[cityB].push_back({cityA, cost});    // B -> (A, cost), undirected graph
+    }
+
+    // Perform BFS to check if all nodes are reachable from a starting node
+    bool isConnected() {
+        unordered_map<string, bool> visited;
+        if (adjList.empty()) return true; // Empty graph is trivially connected
+
+        // Get the first node to start BFS
+        string startCity = adjList.begin()->first;
+
+        queue<string> q;
+        q.push(startCity);
+        visited[startCity] = true;
+
+        while (!q.empty()) {
+            string city = q.front();
+            q.pop();
+
+            // Explore neighbors
+            for (auto neighbor : adjList[city]) {
+                if (!visited[neighbor.first]) {
+                    visited[neighbor.first] = true;
+                    q.push(neighbor.first);
+                    cout << neighbor.second;
+                }
+            }
+        }
+
+        // If all cities are visited, the graph is connected
+        return visited.size() == adjList.size();
+    }
+
+    // Print the graph (adjacency list representation)
+    void printGraph() {
+        for (auto& pair : adjList) {
+            cout << pair.first << " -> ";
+            for (auto& neighbor : pair.second) {
+                cout << "(" << neighbor.first << ", " << neighbor.second << ") ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    Graph g;
+    int n;
+    cout << "Enter the number of flights: ";
+    cin >> n;
+
+    // Taking input for flights between cities
+    for (int i = 0; i < n; ++i) {
+        string cityA, cityB;
+        int cost;
+        cout << "Enter flight details (CityA CityB Cost): ";
+        cin >> cityA >> cityB >> cost;
+        g.addFlight(cityA, cityB, cost);
+    }
+
+    // Check if the graph is connected
+    if (g.isConnected()) {
+        cout << "\nThe graph is connected." << endl;
+    } else {
+        cout << "\nThe graph is not connected." << endl;
+    }
+
+    // Print the graph
+    cout << "\nGraph (Adjacency List Representation):" << endl;
+    g.printGraph();
+
+    return 0;
+}
