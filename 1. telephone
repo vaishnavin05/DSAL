@@ -95,9 +95,9 @@ def main():
     hash1 = [None for _ in range(10)]
     hash2 = [None for _ in range(10)]
     print("-------------------------------")
-    print(" Group-AAssignment-1")
+    
     while True:
-        print("-------------------------")
+        
         print("\t1. Insert Value")
         print("\t2. Display")
         print("\t3. Search")
